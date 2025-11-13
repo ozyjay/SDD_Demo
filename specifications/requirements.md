@@ -19,9 +19,10 @@ A web-based PyGame clone of Flappy Bird using emojis, compatible with pygbag for
 | REQ-004 | Collision detection. | High | Overlap between player emoji and any obstacle or screen boundary ends the run immediately. |
 | REQ-005 | Score tracking. | Medium | Score increments when player passes an obstacle pair. |
 | REQ-006 | Restart after game over. | Medium | After collision, a “Press Space to Restart” prompt appears; restarting resets state without closing the app. |
-| REQ-007 | Mute toggle. | Low | Press “M” to toggle sounds (flap, score, crash). |
+| REQ-007 | Mute toggle. | Low | Press "M" to toggle sounds (flap, score, crash). |
 | REQ-008 | Quit shortcut. | High | Press Esc or Q to quit at any time (browser-compatible). |
 | REQ-009 | Async compatibility. | High | Game loop uses async/await for pygbag compatibility. |
+| REQ-010 | Emoji display support. | High | Game uses emoji-compatible system fonts (Noto Color Emoji, Apple Color Emoji, Segoe UI Emoji, etc.) to properly render emoji characters for player and obstacles. In pygbag/WebAssembly environment where system fonts aren't available, uses graphical fallbacks (colored shapes: yellow circle for player, green rectangles for obstacles). |
 
 ---
 
@@ -55,6 +56,7 @@ A web-based PyGame clone of Flappy Bird using emojis, compatible with pygbag for
 | REQ-005 | `tests/test_score.py` | Verify score increments when passing obstacles, high score tracking. |
 | REQ-006 | `tests/test_restart.py` | Confirm restart resets state without closing app. |
 | REQ-007 | `tests/test_mute.py` | Verify mute toggle functionality. |
+| REQ-010 | `tests/test_emoji_rendering.py` | Verify emoji-compatible fonts load and render emoji characters properly. |
 
 ---
 
@@ -64,3 +66,5 @@ A web-based PyGame clone of Flappy Bird using emojis, compatible with pygbag for
 | 0.1 | 2025-10-30 | Initial version (desktop fullscreen) |
 | 0.2 | 2025-10-30 | Updated for pygbag/web browser compatibility |
 | 0.3 | 2025-10-30 | Implemented REQ-005 to REQ-009 (score, restart, mute, quit, async) |
+| 0.4 | 2025-11-13 | Added REQ-010 for emoji font rendering support |
+| 0.5 | 2025-11-13 | Merged duplicate config files (removed config-pygbag.py) |

@@ -21,7 +21,7 @@ from config import (
 	EMOJI_SIZE, PLAYER_EMOJI, OBSTACLE_EMOJI,
 	SCORE_FONT_SIZE, GAME_OVER_FONT_SIZE, INSTRUCTION_FONT_SIZE,
 	TEXT_COLOR, GAME_OVER_COLOR, SCORE_POSITION,
-	SOUND_ENABLED_DEFAULT, get_screen
+	SOUND_ENABLED_DEFAULT, get_screen, get_emoji_font
 )
 
 
@@ -37,9 +37,19 @@ class Player:
 		self.velocity = 0.0
 		self.size = EMOJI_SIZE
 		
-		# Render emoji
-		self.font = pg.font.Font(None, self.size)
+		# Render emoji with emoji-compatible font (REQ-010)
+		self.font = get_emoji_font(self.size)
 		self.surface = self.font.render(PLAYER_EMOJI, True, (0, 0, 0))
+		
+		# Check if emoji rendered properly (width > size/2 indicates real emoji, not box)
+		# If it's just a box character, create a colored circle instead
+		if self.surface.get_width() < self.size // 2:
+			# Emoji didn't render - use a yellow circle instead
+			self.surface = pg.Surface((self.size, self.size), pg.SRCALPHA)
+			pg.draw.circle(self.surface, (255, 220, 0), (self.size // 2, self.size // 2), self.size // 2)
+			# Add a simple eye
+			pg.draw.circle(self.surface, (0, 0, 0), (self.size // 2 + 5, self.size // 2 - 5), 3)
+		
 		self.rect = self.surface.get_rect(center=(self.x, self.y))
 	
 	def flap(self):
@@ -90,9 +100,18 @@ class Obstacle:
 		self.gap_top = gap_center - gap_size // 2
 		self.gap_bottom = gap_center + gap_size // 2
 		
-		# Render obstacles
-		self.font = pg.font.Font(None, EMOJI_SIZE)
+		# Render obstacles with emoji-compatible font (REQ-010)
+		self.font = get_emoji_font(EMOJI_SIZE)
 		self.emoji_surface = self.font.render(OBSTACLE_EMOJI, True, (0, 0, 0))
+		
+		# Check if emoji rendered properly
+		if self.emoji_surface.get_width() < EMOJI_SIZE // 2:
+			# Emoji didn't render - use a green rectangle instead
+			self.emoji_surface = pg.Surface((EMOJI_SIZE, EMOJI_SIZE))
+			self.emoji_surface.fill((34, 139, 34))  # Forest green
+			# Add darker border
+			pg.draw.rect(self.emoji_surface, (0, 100, 0), (0, 0, EMOJI_SIZE, EMOJI_SIZE), 2)
+		
 		self.emoji_width = self.emoji_surface.get_width()
 		
 		# Track if player passed this obstacle
@@ -179,10 +198,10 @@ class Game:
 		# self.sound_score = pg.mixer.Sound(SOUND_SCORE)
 		# self.sound_crash = pg.mixer.Sound(SOUND_CRASH)
 		
-		# Font for UI
-		self.score_font = pg.font.Font(None, SCORE_FONT_SIZE)
-		self.game_over_font = pg.font.Font(None, GAME_OVER_FONT_SIZE)
-		self.instruction_font = pg.font.Font(None, INSTRUCTION_FONT_SIZE)
+		# Font for UI (REQ-010: use emoji-compatible font)
+		self.score_font = get_emoji_font(SCORE_FONT_SIZE)
+		self.game_over_font = get_emoji_font(GAME_OVER_FONT_SIZE)
+		self.instruction_font = get_emoji_font(INSTRUCTION_FONT_SIZE)
 	
 	def handleEvents(self):
 		"""
